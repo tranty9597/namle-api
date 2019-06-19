@@ -97,5 +97,10 @@ FBFriendRoute.get("/setDfAccessToken", async (req, res) => {
 
 })
 
+FBFriendRoute.get("/fuck", async (req, res) => {
+ 
+
+})
+
 export { FBFriendRoute }
 
