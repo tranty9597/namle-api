@@ -73,7 +73,6 @@ CapsRoutes.get("/casps/getValue", async (req, res) => {
                     const time = new Date(snapshot.val()).getTime();
                     const now = new Date().getTime();
                     if (now - time > 3 * 60 * 60 * 1000) {
-                        FirbaseDatabase.ref(`casp/data/${a}/status`).set(0)
                         return res.json({ success: true, value: JSON.parse(snapshotVal.value) })
                     } else {
                         return res.json({ success: false, message: "This cookie has been using!" })
