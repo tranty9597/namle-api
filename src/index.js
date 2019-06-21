@@ -1,8 +1,8 @@
 import express from "express"
 import bodyParser from "body-parser"
 import cors from "cors";
-import { CloseCookie } from './src/cron'
-import { FBFriendRoute, CapsRoutes } from './src/routes'
+import { CloseCookie } from './cron'
+import { FBFriendRoute, CapsRoutes } from './routes'
 
 const app = express();
 
