@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon --exec babel-node index.js",
-    "build": "babel lib -d dist"
+    "build": "npm run clean && npm run build-babel",
+    "clean": "rm -rf build && mkdir build",
+    "build-babel": "babel -d ./build ./src -s"
   },
   "author": "tytv",
   "license": "ISC",
@@ -14,6 +16,7 @@
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
+    "cron": "^1.7.1",
     "express": "^4.16.4",
     "firebase": "^5.10.0",
     "libphonenumber-js": "^1.7.15",
