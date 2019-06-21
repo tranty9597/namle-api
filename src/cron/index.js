@@ -10,7 +10,7 @@ export const CloseCookie = new cron.CronJob('* * * * *', function () {
                     .once("value", smap => {
                         const time = new Date(smap.val()).getTime();
                         const now = new Date().getTime();
-                        if (now - time > 3 * 60 * 60 * 1000) {
+                        if (now - time > 30 * 60 * 1000) {
                             FirbaseDatabase.ref(`casp/data/${child.key}/status`).set(0)
                         }
                     })
