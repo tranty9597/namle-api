@@ -69,7 +69,7 @@ CapsRoutes.get("/casps/getValue", async (req, res) => {
                 return res.json({ success: true, value: JSON.parse(snapshotVal.value) })
             } else {
 
-                FirbaseDatabase.ref(`casp/${a}/last-time`).once("value", snapshot => {
+                FirbaseDatabase.ref(`casp/data/${a}/last-time`).once("value", snapshot => {
                     const time = new Date(snapshot.val()).getTime();
                     const now = new Date().getTime();
                     if (now - time > 30 * 60 * 1000) {
