@@ -63,23 +63,27 @@ CapsRoutes.get("/casps/getValue", async (req, res) => {
     checkRequestToken(token).then(() => {
         FirbaseDatabase.ref(`casp/data/${a}`).once("value", snapshot => {
             const snapshotVal = snapshot.val()
-            if (snapshotVal.status === 0) {
-                FirbaseDatabase.ref(`casp/data/${a}/status`).set(1)
-                FirbaseDatabase.ref(`casp/data/${a}/last-time`).set(new Date().getTime())
-                return res.json({ success: true, value: JSON.parse(snapshotVal.value) })
+            if (snapshotVal && snapshotVal.value) {
+                if (snapshotVal.status === 0) {
+                    FirbaseDatabase.ref(`casp/data/${a}/status`).set(1)
+                    FirbaseDatabase.ref(`casp/data/${a}/last-time`).set(new Date().getTime())
+                    return res.json({ success: true, value: JSON.parse(snapshotVal.value) })
+                } else {
+
+                    FirbaseDatabase.ref(`casp/data/${a}/last-time`).once("value", snapshot => {
+                        const time = new Date(snapshot.val()).getTime();
+                        const now = new Date().getTime();
+                        if (now - time > 30 * 60 * 1000) {
+                            FirbaseDatabase.ref(`casp/data/${a}/last-time`).set(new Date().getTime())
+                            return res.json({ success: true, value: JSON.parse(snapshotVal.value) })
+                        } else {
+                            return res.json({ success: false, message: "This cookie has been using!" })
+                        }
+                    })
+
+                }
             } else {
-
-                FirbaseDatabase.ref(`casp/data/${a}/last-time`).once("value", snapshot => {
-                    const time = new Date(snapshot.val()).getTime();
-                    const now = new Date().getTime();
-                    if (now - time > 30 * 60 * 1000) {
-                        FirbaseDatabase.ref(`casp/data/${a}/last-time`).set(new Date().getTime())
-                        return res.json({ success: true, value: JSON.parse(snapshotVal.value) })
-                    } else {
-                        return res.json({ success: false, message: "This cookie has been using!" })
-                    }
-                })
-
+                return res.json({ success: true, message: "Not found!" })
             }
         }).catch(err => {
             return res.json({ error: err, success: false }, 500)
