@@ -28,11 +28,11 @@ function checkRequestToken(token) {
 }
 
 CapsRoutes.post("/casps/addValue", async (req, res) => {
-    const { a, b, c } = req.body
+    const { a, b, c, privateKey } = req.body
     const { token } = req.headers
     checkRequestToken(token).then(() => {
         FirbaseDatabase.ref(`casp/data/${a}`).set({
-            value: JSON.stringify({ a, b, c }),
+            value: JSON.stringify({ a, b, c, privateKey }),
             status: 0
         }).then(value => {
             return res.json({ value, success: true })
@@ -58,11 +58,15 @@ CapsRoutes.get("/casps/close-value", async (req, res) => {
 })
 
 CapsRoutes.get("/casps/getValue", async (req, res) => {
-    const { a } = req.query
+    const { a, privateKey } = req.query
     const { token } = req.headers
     checkRequestToken(token).then(() => {
         FirbaseDatabase.ref(`casp/data/${a}`).once("value", snapshot => {
             const snapshotVal = snapshot.val()
+            const value = JSON.parse(snapshotVal.value)
+            if (value.privateKey && value.privateKey !== privateKey) {
+                return res.status(401).json({ message: "Unauthorized", success: false })
+            }
             if (snapshotVal && snapshotVal.value) {
                 if (snapshotVal.status === 0) {
                     FirbaseDatabase.ref(`casp/data/${a}/status`).set(1)
