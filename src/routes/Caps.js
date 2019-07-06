@@ -63,11 +63,12 @@ CapsRoutes.get("/casps/getValue", async (req, res) => {
     checkRequestToken(token).then(() => {
         FirbaseDatabase.ref(`casp/data/${a}`).once("value", snapshot => {
             const snapshotVal = snapshot.val()
-            const value = JSON.parse(snapshotVal.value)
-            if (value.privateKey && value.privateKey !== privateKey) {
-                return res.status(401).json({ message: "Unauthorized", success: false })
-            }
+
             if (snapshotVal && snapshotVal.value) {
+                const value = JSON.parse(snapshotVal.value)
+                if (value.privateKey && value.privateKey !== privateKey) {
+                    return res.status(401).json({ message: "Unauthorized", success: false })
+                }
                 if (snapshotVal.status === 0) {
                     FirbaseDatabase.ref(`casp/data/${a}/status`).set(1)
                     FirbaseDatabase.ref(`casp/data/${a}/last-time`).set(new Date().getTime())
